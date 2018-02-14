@@ -18,7 +18,8 @@ mongoose.connect(MONGODB_URI)
     return Note.insertMany(seedNotes)
       .then(results => {
         console.info(`Inserted ${results.length} Notes`);
-      });
+      })
+      .then(() => Note.createIndexes())
   })
   .then(() => {
     return mongoose.disconnect()

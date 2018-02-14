@@ -5,7 +5,7 @@ mongoose.Promise = global.Promise;
 
 const noteSchema = new mongoose.Schema({
   title: { type: String, index: true },
-  content: String,
+  content: {type:String, index:true },
   created: { type: Date, default: Date.now },
 });
 
