@@ -82,11 +82,22 @@ router.put('/notes/:id', (req, res, next) => {
     err.status = 400;
     return next(err);
   }
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    const err = new Error('The `id` is not valid');
+    err.status = 400;
+    return next(err);
+  }
 
   Note.findByIdAndUpdate(req.params.id,updatedNote,{new:true})
     .select('id title content')
-    .then((response) =>  res.status(201).json(response))
-    .catch((err) => next(err));
+    .then((response) =>  {
+      console.log(response);
+      res.status(201).json(response);
+    })
+    .catch((err) => {
+      console.log('here');
+      next(err);
+    });
 
 });
 

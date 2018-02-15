@@ -8,7 +8,7 @@ const expect = chai.expect;
 const mongoose = require('mongoose');
 
 const Note = require('../models/note');
-const {TEST_MONGODB_URI} = require('../config');
+const { TEST_MONGODB_URI } = require('../config');
 const seedNotes = require('../db/seed/notes.json');
 console.log(TEST_MONGODB_URI);
 chai.use(chaiHttp);
@@ -102,7 +102,7 @@ describe('Noteful API resource',function(){
     });
   });
 
-  describe('Put /V3/notes/:id',() => {
+  describe('PUT /V3/notes/:id',() => {
     it('should update a note given a proper id',() => {
       const updateTestNote = {
         'title':'updated title',
@@ -134,7 +134,7 @@ describe('Noteful API resource',function(){
       return Note.findOne()
         .then((res) => {
           deleteId = res.id;
-          //grab the current length and delete one.
+          //grab the current length and then delete one.
           const dbPromise = Note.find();
           const apiPromise= chai.request(app).delete(`/v3/notes/${deleteId}`);
 
@@ -144,7 +144,6 @@ describe('Noteful API resource',function(){
           dbLength = data.length;
           expect(res).to.have.status(204);
           return Note.find();
-
         })
         .then((res) => {
           expect(res.body).to.not.equal(dbLength);

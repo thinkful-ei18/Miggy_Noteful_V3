@@ -1,13 +1,12 @@
 language: node_js
 node_js: node
 env:
-  - NODE_ENV=test
+- NODE_ENV=test
 services:
-  - mongodb
-# deploy:
-#   provider: heroku
-#   api_key:
-#     secure: [YOUR-API-KEY]
-#   app: [YOUR-APP-NAME]
-#   on:
-#     repo: [YOUR-APP-REPO]
+- mongodb
+deploy:
+  provider: heroku
+  api_key: 42fda5b6-31f3-4c08-8ae3-9633ff1a069f
+  app: notefulmiggyv3
+  on:
+    repo: thinkful-ei18/Miggy_Noteful_V3
