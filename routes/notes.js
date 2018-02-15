@@ -18,10 +18,12 @@ router.get('/notes', (req, res, next) => {
   let sort = '-created'; // default sorting , -created the desc
 
   if (searchTerm) {
+
     filter.$text = { $search: searchTerm };
     projection.score = { $meta: 'textScore' };
     sort = projection;
   }
+  console.log(filter);
   Note.find(filter, projection)
     .select('id title created content')
     .sort(sort)
@@ -38,6 +40,15 @@ router.get('/notes', (req, res, next) => {
 
 /* ========== GET/READ A SINGLE ITEM ========== */
 router.get('/notes/:id', (req, res, next) => {
+
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    const err = new Error('The `id` is not valid');
+    err.status = 400;
+    return next(err);
+  }
+
+
+
   Note.findById(req.params.id)
     .select('id title content')
     .then((results) => {

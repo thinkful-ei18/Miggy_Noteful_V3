@@ -7,7 +7,7 @@ const chaiSpies = require('chai-spies');
 const expect = chai.expect;
 const mongoose = require('mongoose');
 
-const Note = require('../models/note');
+
 const { TEST_MONGODB_URI } = require('../config');
 const seedNotes = require('../db/seed/notes.json');
 console.log(TEST_MONGODB_URI);
