@@ -107,7 +107,6 @@ router.put('/notes/:id', (req, res, next) => {
   Note.findByIdAndUpdate(req.params.id,updatedNote,{new:true})
     .select('id title content')
     .then((response) =>  {
-      console.log(response);
       res.status(201).json(response);
     })
     .catch((err) => {
