@@ -6,16 +6,16 @@ const { PORT,MONGODB_URI } = require('./config');
 
 //mongoose stuff
 const mongoose = require('mongoose');
-// mongoose.Promise = global.Promise;
+mongoose.Promise = global.Promise;
 
 //models or Schemas
 const Note = require('./models/note');
-// const Folders = require('./models/folder');
+const Folders = require('./models/folder');
 
 
 //routers
 const notesRouter = require('./routes/notes');
-// const foldersRouter = require('./routes/folders');
+const foldersRouter = require('./routes/folders');
 
 // Create an Express application
 const app = express();

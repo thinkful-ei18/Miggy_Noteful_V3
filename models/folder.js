@@ -1,7 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
-mongoose.Promise = global.promise;
+mongoose.Promise = global.Promise;
 
 const folderSchema = new mongoose.Schema({
   name:{type:String , unique: true, }
@@ -17,4 +17,4 @@ folderSchema.set('toObject',{
 });
 
 
-module.exports = mongoose.model('folder', folderSchema);
+module.exports = mongoose.model('Folder', folderSchema);
