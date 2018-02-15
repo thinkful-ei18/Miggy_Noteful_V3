@@ -11,21 +11,25 @@ const Note = require('../models/note');
 
 /* ========== GET/READ ALL ITEM ========== */
 router.get('/notes', (req, res, next) => {
-  const { searchTerm } = req.query;
-
+  const { searchTerm, folderId } = req.query;
+  console.log(folderId);
   let filter = {};
   let projection = {};
   let sort = '-created'; // default sorting , -created the desc
 
   if (searchTerm) {
-
     filter.$text = { $search: searchTerm };
     projection.score = { $meta: 'textScore' };
     sort = projection;
   }
-  console.log(filter);
+  if(folderId){
+    filter.folderId= folderId;
+  }
+
+  // console.log(filter);
+  console.log('wee',filter);
   Note.find(filter, projection)
-    .select('id title created content')
+    .select('id title created content folderId')
     .sort(sort)
     .then((results) => {
       if(results){
@@ -50,7 +54,7 @@ router.get('/notes/:id', (req, res, next) => {
 
 
   Note.findById(req.params.id)
-    .select('id title content')
+    .select('id title content folderId')
     .then((results) => {
       if(results){
         res.json(results);
@@ -66,7 +70,8 @@ router.get('/notes/:id', (req, res, next) => {
 router.post('/notes', (req, res, next) => {
   Note.create({
     title:req.body.title,
-    content:req.body.content
+    content:req.body.content,
+    folderId:req.body.folderId
   })
     .then((response) => {
       if(response){
@@ -85,8 +90,8 @@ router.post('/notes', (req, res, next) => {
 
 /* ========== PUT/UPDATE A SINGLE ITEM ========== */
 router.put('/notes/:id', (req, res, next) => {
-  let {title,content} = req.body;
-  const updatedNote = {title,content};
+  let {title,content,folderId} = req.body;
+  const updatedNote = {title,content,folderId};
 
   if (!updatedNote.title) {
     const err = new Error('Missing `title` in request body');
