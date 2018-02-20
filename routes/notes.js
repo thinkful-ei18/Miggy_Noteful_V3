@@ -73,6 +73,12 @@ router.get('/notes/:id', (req, res, next) => {
 router.post('/notes', (req, res, next) => {
   const {title, content, folderId, tags} = req.body;
 
+  if (!title) {
+    const err = new Error('Missing `title` in request body');
+    err.status = 400;
+    return next(err);
+  }
+
   tags.forEach((_tag) => {
     if(!mongoose.Types.ObjectId.isValid(_tag)){
       const err = new Error('The `tag id` is invalid');
