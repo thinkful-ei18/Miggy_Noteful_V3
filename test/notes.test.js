@@ -16,7 +16,7 @@ chai.use(chaiHttp);
 chai.use(chaiSpies);
 
 
-describe('Noteful API resource',function(){
+describe('Noteful API resource, Notes test',function(){
   before(function () {
     return mongoose.connect(TEST_MONGODB_URI, { autoIndex: false });
   });
@@ -65,17 +65,18 @@ describe('Noteful API resource',function(){
           expect(res).to.be.json;
 
           expect(res.body).to.be.an('object');
-          expect(res.body).to.have.keys('id','title','content');
+          expect(res.body).to.have.keys('id','title','content','folderId','tags');
 
           expect(res.body.id).to.equal(data.id);
           expect(res.body.title).to.equal(data.title);
           expect(res.body.content).to.equal(data.content);
         });
     });
+
   });
 
   describe('POST /v3/notes', function(){
-    it('should create a new note.',() => {
+    it('Return 201 and the response should equal the note we create',() => {
       const newTestNote={
         'title':'This is a test',
         'content':'This is content for the test',

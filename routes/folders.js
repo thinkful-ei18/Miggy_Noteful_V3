@@ -50,7 +50,7 @@ router.post('/folders',(req,res,next) => {
   const newFolder = {name:req.body.name};
 
   if(!newFolder.name){
-    const err = new Error('Missing `name ` in request body');
+    const err = new Error('Missing `name` in request body');
     err.status = 400;
     return next(err);
   }
@@ -110,7 +110,6 @@ router.delete('/folders/:id',(req,res,next) => {
       return Note.update({},{$set:{'folderId':null}},{multi:true});
     })
     .then((result) => {
-
       res.location(`${req.originalUrl}/${result.id}`).status(204).end();
     })
     .catch((err) => {

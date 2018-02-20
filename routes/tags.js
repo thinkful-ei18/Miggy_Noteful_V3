@@ -24,7 +24,7 @@ router.get('/tags', (req,res,next) => {
 router.get('/tags/:id',(req,res,next) => {
 
   if(!mongoose.Types.ObjectId.isValid(req.params.id)){
-    const err = new Error('The `tag Id` is not valid');
+    const err = new Error('The `id` is not valid');
     err.status = 400;
     return next(err);
   }
@@ -72,7 +72,7 @@ router.put('/tags/:id',(req, res, next) => {
     return next(err);
   }
   if(!mongoose.Types.ObjectId.isValid(req.params.id)){
-    const err = new Error('The `tag Id` is not valid');
+    const err = new Error('The `id` is not valid');
     err.status = 400;
     return next(err);
   }
@@ -95,7 +95,7 @@ router.put('/tags/:id',(req, res, next) => {
 router.delete('/tags/:id',(req,res,next) => {
 
   if(!mongoose.Types.ObjectId.isValid(req.params.id)){
-    const err = new Error('The `tag Id` is not valid');
+    const err = new Error('The `id` is not valid');
     err.status = 400;
     return next(err);
   }
