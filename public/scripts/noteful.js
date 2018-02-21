@@ -18,7 +18,7 @@ const noteful = (function () {
 
     const tagsSelect = generateTagsSelect(store.tags);
     $('.js-note-tags-entry').html(tagsSelect);
-
+    $('.signup-login').toggle(!store.authorized);
     const editForm = $('.js-note-edit-form');
     editForm.find('.js-note-title-entry').val(store.currentNote.title);
     editForm.find('.js-note-content-entry').val(store.currentNote.content);
@@ -203,7 +203,25 @@ const noteful = (function () {
         });
     });
   }
+  function showSuccessMessage(message) {
+    const el = $('.js-success-message');
+    el.text(message).show();
+    setTimeout(() => el.fadeOut('slow'), 3000);
+  }
 
+  function showFailureMessage(message) {
+    const el = $('.js-error-message');
+    el.text(message).show();
+    setTimeout(() => el.fadeOut('slow'), 3000);
+  }
+
+  function handleErrors(err) {
+    if (err.status === 401) {
+      store.authorized = false;
+      noteful.render();
+    }
+    showFailureMessage(err.responseJSON.message);
+  }
   /**
    * FOLDERS EVENT LISTENERS AND HANDLERS
    */
@@ -334,7 +352,61 @@ const noteful = (function () {
         });
     });
   }
-  
+
+  function handleSignupSubmit() {
+    $('.js-signup-from').on('submit', event => {
+      event.preventDefault();
+
+      const signupForm = $(event.currentTarget);
+      const newUser = {
+        fullname: signupForm.find('.js-fullname-entry').val(),
+        username: signupForm.find('.js-username-entry').val(),
+        password: signupForm.find('.js-password-entry').val()
+      };
+
+      api.create('/v3/users', newUser)
+        .then(response => {
+          signupForm[0].reset();
+          showSuccessMessage(`Thank you, ${response.fullname || response.username} for signing up!`);
+        })
+        .catch(handleErrors);
+    });
+  }
+
+  function handleLoginSubmit() {
+    $('.js-login-form').on('submit', event => {
+      event.preventDefault();
+
+      const loginForm = $(event.currentTarget);
+      const loginUser = {
+        username: loginForm.find('.js-username-entry').val(),
+        password: loginForm.find('.js-password-entry').val()
+      };
+
+      api.create('/v3/login', loginUser)
+        .then(response => {
+          store.authorized = true;
+          loginForm[0].reset();
+
+          store.currentUser = response;
+
+          return Promise.all([
+            api.search('/v3/notes'),
+            api.search('/v3/folders'),
+            api.search('/v3/tags')
+          ]);
+        })
+        .then(([notes, folders, tags]) => {
+          store.notes = notes;
+          store.folders = folders;
+          store.tags = tags;
+          render();
+        })
+        .catch(handleErrors);
+    });
+  }
+
+
   function bindEventListeners() {
     handleNoteItemClick();
     handleNoteSearchSubmit();
@@ -342,7 +414,8 @@ const noteful = (function () {
     handleNoteFormSubmit();
     handleNoteStartNewSubmit();
     handleNoteDeleteClick();
-
+    handleSignupSubmit();
+    handleLoginSubmit();
     handleFolderClick();
     handleNewFolderSubmit();
     handleFolderDeleteClick();
@@ -350,6 +423,7 @@ const noteful = (function () {
     handleNewTagSubmit();
     handleTagDeleteClick();
   }
+
 
   // This object contains the only exposed methods from this module:
   return {
