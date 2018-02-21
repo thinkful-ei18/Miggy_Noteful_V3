@@ -3,8 +3,12 @@
 const express = require('express');
 const morgan = require('morgan');
 const passport = require('passport');
-const localStrategy = require('./passport/local');
+const bcrypt = require ('bcryptjs');
+
 const { PORT,MONGODB_URI } = require('./config');
+//require and use the strategy in
+const localStrategy = require('./passport/local');
+passport.use(localStrategy);
 
 //mongoose stuff
 const mongoose = require('mongoose');
