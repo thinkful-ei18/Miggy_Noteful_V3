@@ -18,7 +18,9 @@ const noteful = (function () {
 
     const tagsSelect = generateTagsSelect(store.tags);
     $('.js-note-tags-entry').html(tagsSelect);
+
     $('.signup-login').toggle(!store.authorized);
+
     const editForm = $('.js-note-edit-form');
     editForm.find('.js-note-title-entry').val(store.currentNote.title);
     editForm.find('.js-note-content-entry').val(store.currentNote.content);
@@ -385,10 +387,12 @@ const noteful = (function () {
 
       api.create('/v3/login', loginUser)
         .then(response => {
+          store.authToken = response.authToken;
           store.authorized = true;
           loginForm[0].reset();
 
-          store.currentUser = response;
+          const payload = JSON.parse(atob(response.authToken.split('.')[1]));
+          store.currentUser = payload.user;
 
           return Promise.all([
             api.search('/v3/notes'),
@@ -405,6 +409,8 @@ const noteful = (function () {
         .catch(handleErrors);
     });
   }
+
+
 
 
   function bindEventListeners() {
