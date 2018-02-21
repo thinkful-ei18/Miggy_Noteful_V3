@@ -28,8 +28,7 @@ router.get('/notes', (req, res, next) => {
     filter.tags = tagId;
   }
 
-  // console.log(filter);
-  console.log('wee',filter);
+
   Note.find(filter, projection)
     .select('id title created content folderId tags')
     .populate('tags')

@@ -106,23 +106,26 @@ describe('Noteful API resource, Notes test',function(){
 
   describe('PUT /V3/notes/:id',() => {
     it('should update a note given a proper id',() => {
-      const updateTestNote = {
-        'title':'updated title',
-        'content':'updated content'
-      };
-      let data;
+
+      let updateNote;
+      let oldTitle;
       return Note.findOne()
         .then((res) => {
-          data = res;
-          return chai.request(app).put(`/v3/notes/${data.id}`)
-            .send(updateTestNote);
+
+          oldTitle = res.title;
+          updateNote = res;
+
+
+          updateNote.title = 'New title';
+          updateNote.content = 'New content';
+
+
+          return chai.request(app).put(`/v3/notes/${updateNote.id}`)
+            .send(updateNote);
         })
         .then((res) => {
           expect(res.body).to.be.a('object');
-          expect(res.body.title).to.not.equal(data.title);
-          expect(res.body.content).to.not.equal(data.content);
-          expect(res.body.title).to.equal(updateTestNote.title);
-          expect(res.body.content).to.equal(updateTestNote.content);
+          expect(res.body.title).to.not.equal(oldTitle);
 
         });
 
