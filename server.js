@@ -5,10 +5,16 @@ const morgan = require('morgan');
 const passport = require('passport');
 const bcrypt = require ('bcryptjs');
 
+require('dotenv').config();
+
 const { PORT,MONGODB_URI } = require('./config');
-//require and use the strategy in
+//passport stuff
+
 const localStrategy = require('./passport/local');
+const jwtStrategy = require('./passport/jwt');
+
 passport.use(localStrategy);
+passport.use(jwtStrategy);
 
 //mongoose stuff
 const mongoose = require('mongoose');
@@ -43,11 +49,18 @@ app.use(express.static('public'));
 app.use(express.json());
 
 // Mount router on "/api"
+//making users and loging in
+app.use('/v3', usersRouter);
+app.use('/v3',authRouter);
+//authenticating the jwt, wont make it past this without a valid jwt
+app.use(passport.authenticate('jwt', { session: false, failWithError: true }));
+
+
+//noteful routers
 app.use('/v3', notesRouter);
 app.use('/v3', foldersRouter);
 app.use('/v3', tagsRouter);
-app.use('/v3', usersRouter);
-app.use('/v3',authRouter);
+
 
 // Catch-all 404
 app.use(function (req, res, next) {
