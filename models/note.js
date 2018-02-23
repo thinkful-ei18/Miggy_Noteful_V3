@@ -1,14 +1,16 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const ObjectId = mongoose.Schema.Types.ObjectId;
 mongoose.Promise = global.Promise;
 
 const noteSchema = new mongoose.Schema({
   title: { type: String, index: true },
   content: {type:String, index:true },
   created: { type: Date, default: Date.now },
-  folderId:{type:mongoose.Schema.Types.ObjectId, ref:'Folder'},
-  tags:[{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag'}]
+  userId: {type: ObjectId , ref:'User', required:true},
+  folderId: {type:ObjectId, ref:'Folder'},
+  tags: [{type:ObjectId, ref: 'Tag'}]
 
 });
 

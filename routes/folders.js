@@ -11,8 +11,8 @@ const Note = require('../models/note');
 
 
 router.get('/folders',(req, res, next) => {
-
-  Folder.find({})
+  const userId = req.user.id;
+  Folder.find({userId})
     .select('id name')
     .sort('name')
     .then((results) => {
@@ -27,6 +27,8 @@ router.get('/folders',(req, res, next) => {
 });
 
 router.get('/folders/:id',(req,res,next) => {
+  const id = req.params;
+  const userId = req.user.id;
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     const err = new Error('The `id` is not valid');
@@ -34,7 +36,7 @@ router.get('/folders/:id',(req,res,next) => {
     return next(err);
   }
 
-  Folder.findById(req.params.id)
+  Folder.findById({_id:id, userId})
     .select('id name')
     .then((results) => {
       if(results){
@@ -47,7 +49,7 @@ router.get('/folders/:id',(req,res,next) => {
 });
 
 router.post('/folders',(req,res,next) => {
-  const newFolder = {name:req.body.name};
+  const newFolder = {name:req.body.name,userId:req.user.id};
 
   if(!newFolder.name){
     const err = new Error('Missing `name` in request body');
@@ -70,7 +72,7 @@ router.post('/folders',(req,res,next) => {
 });
 
 router.put('/folders/:id',(req,res,next) => {
-  const updateFolder = {name:req.body.name};
+  const updateFolder = {name:req.body.name,userId:req.user.id};
 
   if(!updateFolder){
     const err = new Error('Missing `name ` in request body');

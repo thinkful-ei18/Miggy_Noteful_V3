@@ -21,7 +21,6 @@ router.post('/refresh', jwtAuth, (req, res) => {
 
 
 function createAuthToken (user){
-
   return jwt.sign({ user }, JWT_SECRET, {
     subject: user.username,
     expiresIn:JWT_EXPIRY
@@ -31,19 +30,19 @@ function createAuthToken (user){
 
 
 
-//custom error messages
-// router.use((err,req,res,next) => {
-//   const requiredFields = ['username','password'];
-//   const missingField = requiredFields.find((field) => !(field in req.body));
-//   if(missingField){
-//     return res.status(422).json({
-//       code: 422,
-//       reason: 'ValidationError',
-//       message: 'Missing field',
-//       location: missingField
-//     });
-//   }
-//   res.json(err);
-// });
+// custom error messages
+router.use((err,req,res,next) => {
+  const requiredFields = ['username','password'];
+  const missingField = requiredFields.find((field) => !(field in req.body));
+  if(missingField){
+    return res.status(422).json({
+      code: 422,
+      reason: 'ValidationError',
+      message: 'Missing field',
+      location: missingField
+    });
+  }
+  res.json(err);
+});
 
 module.exports = router;

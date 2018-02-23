@@ -6,8 +6,8 @@ const mongoose = require('mongoose');
 const Tag = require('../models/tag');
 const Note = require('../models/note');
 router.get('/tags', (req,res,next) => {
-
-  Tag.find({})
+  const userId = req.user.id;
+  Tag.find({userId})
     .select('id name')
     .sort('name')
     .then((results) => {
@@ -22,13 +22,14 @@ router.get('/tags', (req,res,next) => {
 });
 
 router.get('/tags/:id',(req,res,next) => {
-
+  const id = req.params;
+  const userId = req.user.id;
   if(!mongoose.Types.ObjectId.isValid(req.params.id)){
     const err = new Error('The `id` is not valid');
     err.status = 400;
     return next(err);
   }
-  Tag.findById(req.params.id)
+  Tag.findById({_id:id,userId})
     .select('id name')
     .then((results) => {
       if (results) {
@@ -41,7 +42,7 @@ router.get('/tags/:id',(req,res,next) => {
 });
 
 router.post('/tags',(req,res,next) => {
-  const newTag = {name:req.body.name};
+  const newTag = {name:req.body.name, userId:req.user.id};
 
   if(!newTag.name){
     const err = new Error ('Missing `name` in request body');
@@ -64,7 +65,7 @@ router.post('/tags',(req,res,next) => {
 });
 
 router.put('/tags/:id',(req, res, next) => {
-  const updateTag = {name:req.body.name};
+  const updateTag = {name:req.body.name,userId:req.user.id};
 
   if(!updateTag.name){
     const err = new Error ('Missing `name` in request body');
