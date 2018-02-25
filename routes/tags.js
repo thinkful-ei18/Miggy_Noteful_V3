@@ -5,6 +5,10 @@ const mongoose = require('mongoose');
 
 const Tag = require('../models/tag');
 const Note = require('../models/note');
+const passport = require('passport');
+
+router.use(passport.authenticate('jwt', { session: false, failWithError: true }));
+
 router.get('/tags', (req,res,next) => {
   const userId = req.user.id;
   Tag.find({userId})
@@ -22,7 +26,7 @@ router.get('/tags', (req,res,next) => {
 });
 
 router.get('/tags/:id',(req,res,next) => {
-  const id = req.params;
+  const {id} = req.params;
   const userId = req.user.id;
   if(!mongoose.Types.ObjectId.isValid(req.params.id)){
     const err = new Error('The `id` is not valid');
@@ -30,7 +34,7 @@ router.get('/tags/:id',(req,res,next) => {
     return next(err);
   }
   Tag.findById({_id:id,userId})
-    .select('id name')
+    .select('id name userId')
     .then((results) => {
       if (results) {
         res.json(results);

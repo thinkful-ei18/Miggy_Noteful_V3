@@ -54,7 +54,6 @@ app.use('/v3', usersRouter);
 app.use('/v3',authRouter);
 
 //authenticating the jwt, wont make it past this without a valid jwt
-app.use(passport.authenticate('jwt', { session: false, failWithError: true }));
 
 
 //noteful routers

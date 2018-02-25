@@ -9,7 +9,9 @@ mongoose.Promise = global.Promise;
 const Note = require('../models/note');
 const Folder = require('../models/folder');
 const Tag = require('../models/tag');
+const passport = require('passport');
 
+router.use(passport.authenticate('jwt', { session: false, failWithError: true }));
 
 /* ========== GET/READ ALL ITEM ========== */
 router.get('/notes', (req, res, next) => {
@@ -68,7 +70,9 @@ router.get('/notes/:id', (req, res, next) => {
         next();
       }
     })
-    .catch(next);
+    .catch((err) => {
+      next (err)
+    });
 });
 
 /* ========== POST/CREATE AN ITEM ========== */
@@ -81,14 +85,15 @@ router.post('/notes', (req, res, next) => {
     err.status = 400;
     return next(err);
   }
-
-  tags.forEach((_tag) => {
-    if(!mongoose.Types.ObjectId.isValid(_tag)){
-      const err = new Error('The `tag id` is invalid');
-      err.status = 400;
-      next(err);
-    }
-  });
+  if(tags){
+    tags.forEach((_tag) => {
+      if(!mongoose.Types.ObjectId.isValid(_tag)){
+        const err = new Error('The `tag id` is invalid');
+        err.status = 400;
+        next(err);
+      }
+    });
+  }
 
   const updateObject = {
     title:title,
@@ -123,6 +128,7 @@ router.post('/notes', (req, res, next) => {
       }
     })
     .catch((err) => {
+
       next(err);
     });
 
@@ -154,9 +160,15 @@ router.put('/notes/:id', (req, res, next) => {
     return next(err);
   }
 
-  Note.findByIdAndUpdate(req.params.id,updatedNote,{new:true})
-    .select('id title content creted folderId tags')
-    .populate('tags')
+  const folderCheck = validateFolderId(folderId,userId);
+  const tagCheck = validateTags(tags,userId);
+
+  return Promise.all([folderCheck,tagCheck])
+    .then(() => {
+      return Note.findByIdAndUpdate(req.params.id,updatedNote,{new:true})
+        .select('id title content creted folderId tags')
+        .populate('tags');
+    })
     .then((response) =>  {
       res.status(201).json(response);
     })

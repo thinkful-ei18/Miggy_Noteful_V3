@@ -6,8 +6,9 @@ const mongoose = require('mongoose');
 
 const Folder = require('../models/folder');
 const Note = require('../models/note');
+const passport = require('passport');
 
-// FOLDER ROUTER ENDPOINTS GO HERE
+router.use(passport.authenticate('jwt', { session: false, failWithError: true }));
 
 
 router.get('/folders',(req, res, next) => {
@@ -27,7 +28,7 @@ router.get('/folders',(req, res, next) => {
 });
 
 router.get('/folders/:id',(req,res,next) => {
-  const id = req.params;
+  const {id} = req.params;
   const userId = req.user.id;
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -35,9 +36,8 @@ router.get('/folders/:id',(req,res,next) => {
     err.status = 400;
     return next(err);
   }
-
-  Folder.findById({_id:id, userId})
-    .select('id name')
+  return Folder.findOne({_id:id, userId})
+    .select('id name userId')
     .then((results) => {
       if(results){
         res.json(results);
@@ -45,6 +45,9 @@ router.get('/folders/:id',(req,res,next) => {
       else {
         next();
       }
+    })
+    .catch((err) => {
+      next(err);
     });
 });
 
