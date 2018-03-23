@@ -1,9 +1,9 @@
 'use strict';
-
+const mongoose = require('mongoose');
 const express = require('express');
 // Create an router instance (aka "mini-app")
 const router = express.Router();
-const mongoose = require('mongoose');
+
 mongoose.Promise = global.Promise;
 
 const Note = require('../models/note');
@@ -31,7 +31,6 @@ router.get('/notes', (req, res, next) => {
   if(tagId){
     filter.tags = tagId;
   }
-
 
   Note.find(filter, projection)
     .select('id title created content folderId tags')
@@ -71,7 +70,7 @@ router.get('/notes/:id', (req, res, next) => {
       }
     })
     .catch((err) => {
-      next (err)
+      next (err);
     });
 });
 
